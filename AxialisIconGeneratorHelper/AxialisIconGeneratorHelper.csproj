@@ -15,6 +15,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,7 +30,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,7 +52,7 @@
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
@@ -92,6 +92,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\GridCellControl.cs" />
     <Compile Include="Controls\Notification\Notification.cs" />
     <Compile Include="Controls\Notification\NotificationArea.cs" />
     <Compile Include="Controls\Notification\NotificationContent.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Controls\Notification\NotificationTemplateSelector.cs" />
     <Compile Include="Controls\ReversibleStackPanel.cs" />
     <Compile Include="Services\NotificationService.cs" />
+    <Compile Include="Utils\ColorParser.cs" />
     <Compile Include="Utils\HotKey.cs" />
     <Compile Include="Utils\InputUtils.cs" />
     <Compile Include="Utils\SVGUtils.cs" />

@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using AxialisIconGeneratorHelper.Controls;
 using AxialisIconGeneratorHelper.Controls.Notification;
 using AxialisIconGeneratorHelper.Services;
 using AxialisIconGeneratorHelper.Utils;
@@ -75,34 +76,55 @@ namespace AxialisIconGeneratorHelper.ViewModels
 
         private static UIElement GetNotificationContent(string text, Drawing drawingGroup)
         {
-            var panel = new StackPanel {Orientation = Orientation.Vertical};
+            const int cellSize = 12;
 
-            var textBlock = new TextBlock {Text = text};
-            panel.Children.Add(textBlock);
-
-            var image = new Image
+            return new StackPanel
             {
-                Source = new DrawingImage(drawingGroup),
-                MaxHeight = 256,
-                MaxWidth = 256,
-                Margin = new Thickness(5),
-                Stretch = Stretch.Uniform
+                Orientation = Orientation.Vertical,
+                Children =
+                {
+                    new TextBlock
+                    {
+                        Text = text,
+                        Foreground = new SolidColorBrush(ColorParser.ParseHexColor("#606060")),
+                        Margin = new Thickness(0, 0, 0, 5)
+                    },
+                    new GridCellControl
+                    {
+                        Background = new SolidColorBrush(ColorParser.ParseHexColor("#fcfbfa")),
+                        BorderBrush = new SolidColorBrush(ColorParser.ParseHexColor("#dcdcdc")),
+                        BorderThickness = new Thickness(1),
+                        CellSize = new Size(cellSize, cellSize),
+                        Padding = new Thickness(cellSize),
+                        Width = cellSize * 24,
+                        Height = cellSize * 24,
+                        Child = new Image
+                        {
+                            Source = new DrawingImage(drawingGroup),
+                            Stretch = Stretch.Uniform
+                        }
+                    }
+                }
             };
-            panel.Children.Add(image);
-
-            return panel;
         }
 
         private void OnCopySvgHotKeyHandler()
         {
             var handle = InputUtils.FocusedControlInActiveWindow();
             var content = InputUtils.GetText(handle);
-            Clipboard.SetDataObject(content);
+            var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
+            if (drawingGroup.Children.Count < 1)
+            {
+                this.ShowInvalidSvgMessage();
+                return;
+            }
 
+            Clipboard.SetDataObject(content);
             this.notificationService.Show(new NotificationContent
             {
-                Content = GetNotificationContent(@"SVG скопирован", SvgUtils.ConvertToDrawingGroup(content)),
-                Title = @"Axialis IconGenerator Helper"
+                Content = GetNotificationContent(@"SVG скопирован", drawingGroup),
+                Title = @"Axialis IconGenerator Helper",
+                Type = NotificationType.Success
             });
         }
 
@@ -110,12 +132,19 @@ namespace AxialisIconGeneratorHelper.ViewModels
         {
             var handle = InputUtils.FocusedControlInActiveWindow();
             var content = InputUtils.GetText(handle);
-            Clipboard.SetDataObject(SvgUtils.ConvertToXaml(content));
+            var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
+            if (drawingGroup.Children.Count < 1)
+            {
+                this.ShowInvalidSvgMessage();
+                return;
+            }
 
+            Clipboard.SetDataObject(SvgUtils.ConvertToXaml(content));
             this.notificationService.Show(new NotificationContent
             {
-                Content = GetNotificationContent(@"XAML скопирован", SvgUtils.ConvertToDrawingGroup(content)),
-                Title = @"Axialis IconGenerator Helper"
+                Content = GetNotificationContent(@"XAML скопирован", drawingGroup),
+                Title = @"Axialis IconGenerator Helper",
+                Type = NotificationType.Success
             });
         }
 
@@ -140,6 +169,12 @@ namespace AxialisIconGeneratorHelper.ViewModels
         {
             var handle = InputUtils.FocusedControlInActiveWindow();
             var content = InputUtils.GetText(handle);
+            var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
+            if (drawingGroup.Children.Count < 1)
+            {
+                this.ShowInvalidSvgMessage();
+                return;
+            }
 
             var dialog = new SaveFileDialog
             {
@@ -151,8 +186,9 @@ namespace AxialisIconGeneratorHelper.ViewModels
                 File.WriteAllText(dialog.FileName, content);
                 this.notificationService.Show(new NotificationContent
                 {
-                    Content = GetNotificationContent(@"SVG сохранён", SvgUtils.ConvertToDrawingGroup(content)),
-                    Title = @"Axialis IconGenerator Helper"
+                    Content = GetNotificationContent(@"SVG сохранён", drawingGroup),
+                    Title = @"Axialis IconGenerator Helper",
+                    Type = NotificationType.Success
                 });
             }
         }
@@ -170,6 +206,16 @@ namespace AxialisIconGeneratorHelper.ViewModels
                 Content = builder.ToString().Trim(),
                 Title = @"Axialis IconGenerator Helper"
             });
+        }
+
+        private void ShowInvalidSvgMessage()
+        {
+            this.notificationService.Show(new NotificationContent
+            {
+                Content = "Invalid SVG",
+                Title = @"Axialis IconGenerator Helper",
+                Type = NotificationType.Error
+            }, expirationTime: TimeSpan.MaxValue);
         }
 
         #endregion
