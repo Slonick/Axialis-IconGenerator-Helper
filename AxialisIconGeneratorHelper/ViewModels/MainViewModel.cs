@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml;
 using AxialisIconGeneratorHelper.Controls;
 using AxialisIconGeneratorHelper.Controls.Notification;
 using AxialisIconGeneratorHelper.Services;
@@ -28,6 +29,7 @@ namespace AxialisIconGeneratorHelper.ViewModels
 
         private const string IconGeneratorPath = @"C:\Program Files (x86)\Axialis\IconGenerator\IconGenerator.exe";
         private const string IconGeneratorProcessName = @"IconGenerator";
+        private const string AppTitle = @"Axialis IconGenerator Helper";
 
         #endregion
 
@@ -108,40 +110,48 @@ namespace AxialisIconGeneratorHelper.ViewModels
         {
             var handle = InputUtils.FocusedControlInActiveWindow();
             var content = InputUtils.GetText(handle);
-            var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
-            if (drawingGroup.Children.Count < 1)
+            
+            try
+            {
+                var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
+                if (drawingGroup.Children.Count < 1) throw new XmlException();
+
+                Clipboard.SetDataObject(content);
+                this.notificationService.Show(new NotificationContent
+                {
+                    Content = GetNotificationContent(@"SVG скопирован", drawingGroup),
+                    Title = AppTitle,
+                    Type = NotificationType.Success
+                });
+            }
+            catch (XmlException)
             {
                 this.ShowInvalidSvgMessage();
-                return;
             }
-
-            Clipboard.SetDataObject(content);
-            this.notificationService.Show(new NotificationContent
-            {
-                Content = GetNotificationContent(@"SVG скопирован", drawingGroup),
-                Title = @"Axialis IconGenerator Helper",
-                Type = NotificationType.Success
-            });
         }
 
         private void CopyXamlExecute()
         {
             var handle = InputUtils.FocusedControlInActiveWindow();
             var content = InputUtils.GetText(handle);
-            var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
-            if (drawingGroup.Children.Count < 1)
+
+            try
+            {
+                var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
+                if (drawingGroup.Children.Count < 1) throw new XmlException();
+
+                Clipboard.SetDataObject(SvgUtils.ConvertToXaml(content));
+                this.notificationService.Show(new NotificationContent
+                {
+                    Content = GetNotificationContent(@"XAML скопирован", drawingGroup),
+                    Title = AppTitle,
+                    Type = NotificationType.Success
+                });
+            }
+            catch (XmlException)
             {
                 this.ShowInvalidSvgMessage();
-                return;
             }
-
-            Clipboard.SetDataObject(SvgUtils.ConvertToXaml(content));
-            this.notificationService.Show(new NotificationContent
-            {
-                Content = GetNotificationContent(@"XAML скопирован", drawingGroup),
-                Title = @"Axialis IconGenerator Helper",
-                Type = NotificationType.Success
-            });
         }
 
         private static bool FocusInIconGenerator(IntPtr controlHandle)
@@ -191,7 +201,7 @@ namespace AxialisIconGeneratorHelper.ViewModels
             this.notificationService.Show(new NotificationContent
             {
                 Content = "Закрытие программы...",
-                Title = @"Axialis IconGenerator Helper"
+                Title = AppTitle
             });
 
             await Task.Delay(1000).ConfigureAwait(true);
@@ -202,27 +212,25 @@ namespace AxialisIconGeneratorHelper.ViewModels
         {
             var handle = InputUtils.FocusedControlInActiveWindow();
             var content = InputUtils.GetText(handle);
-            var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
-            if (drawingGroup.Children.Count < 1)
+            try
             {
-                this.ShowInvalidSvgMessage();
-                return;
-            }
+                var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
+                if (drawingGroup.Children.Count < 1) throw new XmlException();
 
-            var dialog = new SaveFileDialog
-            {
-                Filter = "SVG|*.svg"
-            };
+                var dialog = new SaveFileDialog { Filter = "SVG|*.svg" };
+                if (!dialog.ShowDialog(Application.Current.MainWindow).Value) return;
 
-            if (dialog.ShowDialog(Application.Current.MainWindow).Value)
-            {
                 File.WriteAllText(dialog.FileName, content);
                 this.notificationService.Show(new NotificationContent
                 {
                     Content = GetNotificationContent(@"SVG сохранён", drawingGroup),
-                    Title = @"Axialis IconGenerator Helper",
+                    Title = AppTitle,
                     Type = NotificationType.Success
                 });
+            }
+            catch (XmlException)
+            {
+                this.ShowInvalidSvgMessage();
             }
         }
 
@@ -237,16 +245,16 @@ namespace AxialisIconGeneratorHelper.ViewModels
             this.notificationService.Show(new NotificationContent
             {
                 Content = builder.ToString().Trim(),
-                Title = @"Axialis IconGenerator Helper"
-            });
+                Title = AppTitle
+            }, expirationTime: TimeSpan.FromSeconds(10));
         }
 
         private void ShowInvalidSvgMessage()
         {
             this.notificationService.Show(new NotificationContent
             {
-                Content = "Invalid SVG",
-                Title = @"Axialis IconGenerator Helper",
+                Content = @"Не удалось распарсить SVG",
+                Title = AppTitle,
                 Type = NotificationType.Error
             }, expirationTime: TimeSpan.MaxValue);
         }
