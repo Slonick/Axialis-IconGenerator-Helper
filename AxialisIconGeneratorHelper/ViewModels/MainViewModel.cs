@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -46,7 +47,6 @@ namespace AxialisIconGeneratorHelper.ViewModels
             HotKey.Register(Key.X, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.OnCopyXamlHotKeyHandler);
             HotKey.Register(Key.Q, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.OnQuitHotKeyHandler);
 
-
             var processes = Process.GetProcessesByName(@"IconGenerator");
             if (!processes.Any())
             {
@@ -66,18 +66,7 @@ namespace AxialisIconGeneratorHelper.ViewModels
             };
 
             this.isRunningTimer.Elapsed += OnIsRunningTimerElapsed;
-        }
-
-        private async void OnQuitHotKeyHandler()
-        {
-            this.notificationService.Show(new NotificationContent
-            {
-                Content = "Закрытие программы...",
-                Title = @"Axialis IconGenerator Helper"
-            });
-
-            await Task.Delay(1000).ConfigureAwait(true);
-            Environment.Exit(0);
+            this.ShowHelpMessage();
         }
 
         #endregion
@@ -135,6 +124,18 @@ namespace AxialisIconGeneratorHelper.ViewModels
             if (!Process.GetProcessesByName(@"IconGenerator").Any()) Environment.Exit(0);
         }
 
+        private async void OnQuitHotKeyHandler()
+        {
+            this.notificationService.Show(new NotificationContent
+            {
+                Content = "Закрытие программы...",
+                Title = @"Axialis IconGenerator Helper"
+            });
+
+            await Task.Delay(1000).ConfigureAwait(true);
+            Environment.Exit(0);
+        }
+
         private void OnSaveHotKeyHandler()
         {
             var handle = InputUtils.FocusedControlInActiveWindow();
@@ -154,6 +155,21 @@ namespace AxialisIconGeneratorHelper.ViewModels
                     Title = @"Axialis IconGenerator Helper"
                 });
             }
+        }
+
+        private void ShowHelpMessage()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("Ctrl+Shift+Q - Закрыть программу");
+            builder.AppendLine("Ctrl+Shift+S - Сохранить SVG");
+            builder.AppendLine("Ctrl+Shift+C - Копировать SVG");
+            builder.AppendLine("Ctrl+Shift+X - Копировать XAML");
+
+            this.notificationService.Show(new NotificationContent
+            {
+                Content = builder.ToString().Trim(),
+                Title = @"Axialis IconGenerator Helper"
+            });
         }
 
         #endregion
