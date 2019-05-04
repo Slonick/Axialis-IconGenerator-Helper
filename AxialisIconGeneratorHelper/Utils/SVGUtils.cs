@@ -138,6 +138,7 @@ namespace AxialisIconGeneratorHelper.Utils
 
                         break;
                     }
+
                     case GeometryDrawing geometryDrawing:
                     {
                         var gd = geometryDrawing;

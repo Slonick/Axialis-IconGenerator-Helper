@@ -22,11 +22,14 @@ namespace AxialisIconGeneratorHelper.View
             this.ShowInTaskbar = false;
             this.WindowState = WindowState.Minimized;
 
-            this.Loaded += (sender, args) =>
+            void OnLoadedEventHandler(object sender, RoutedEventArgs e)
             {
+                this.Loaded -= OnLoadedEventHandler;
                 WindowUtils.HideWindowFromAltTab(this);
                 vm.Init();
-            };
+            }
+
+            this.Loaded += OnLoadedEventHandler;
         }
 
         #endregion

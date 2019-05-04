@@ -20,13 +20,13 @@ namespace AxialisIconGeneratorHelper.Utils
 
         #region Private Fields
 
-        private static Dictionary<int, Action> dictHotKeyToCalBackProc;
+        private static Dictionary<int, ICommand> dictHotKeyToCalBackProc;
 
         #endregion
 
         #region Public Methods
 
-        public static void Register(Key key, KeyModifier keyModifiers, Action action)
+        public static void Register(Key key, KeyModifier keyModifiers, ICommand command)
         {
             var virtualKeyCode = KeyInterop.VirtualKeyFromKey(key);
             var id = virtualKeyCode + (int) keyModifiers * 0x10000;
@@ -34,11 +34,11 @@ namespace AxialisIconGeneratorHelper.Utils
 
             if (dictHotKeyToCalBackProc == null)
             {
-                dictHotKeyToCalBackProc = new Dictionary<int, Action>();
+                dictHotKeyToCalBackProc = new Dictionary<int, ICommand>();
                 ComponentDispatcher.ThreadFilterMessage += ComponentDispatcherThreadFilterMessage;
             }
 
-            dictHotKeyToCalBackProc.Add(id, action);
+            dictHotKeyToCalBackProc.Add(id, command);
         }
 
         #endregion
@@ -49,10 +49,11 @@ namespace AxialisIconGeneratorHelper.Utils
         {
             if (handled ||
                 msg.message != WmHotKey ||
-                !dictHotKeyToCalBackProc.TryGetValue((int) msg.wParam, out var action))
+                !dictHotKeyToCalBackProc.TryGetValue((int) msg.wParam, out var command))
                 return;
 
-            action?.Invoke();
+            if (command.CanExecute(null)) command.Execute(null);
+
             handled = true;
         }
 

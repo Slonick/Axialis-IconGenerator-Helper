@@ -15,6 +15,7 @@ using AxialisIconGeneratorHelper.Controls;
 using AxialisIconGeneratorHelper.Controls.Notification;
 using AxialisIconGeneratorHelper.Services;
 using AxialisIconGeneratorHelper.Utils;
+using AxialisIconGeneratorHelper.ViewModels.Base;
 using Microsoft.Win32;
 
 #endregion
@@ -23,10 +24,29 @@ namespace AxialisIconGeneratorHelper.ViewModels
 {
     public class MainViewModel
     {
+        #region Private Constants
+
+        private const string IconGeneratorPath = @"C:\Program Files (x86)\Axialis\IconGenerator\IconGenerator.exe";
+        private const string IconGeneratorProcessName = @"IconGenerator";
+
+        #endregion
+
         #region Private Fields
 
         private Timer isRunningTimer;
         private readonly NotificationService notificationService;
+
+        #endregion
+
+        #region Public Properties
+
+        public RelayCommand CopySvgCommand { get; }
+
+        public RelayCommand CopyXamlCommand { get; }
+
+        public RelayCommand QuitCommand { get; }
+
+        public RelayCommand SaveCommand { get; }
 
         #endregion
 
@@ -35,6 +55,10 @@ namespace AxialisIconGeneratorHelper.ViewModels
         public MainViewModel()
         {
             this.notificationService = new NotificationService();
+            this.SaveCommand = new RelayCommand(this.SaveExecute, CanCopy);
+            this.CopySvgCommand = new RelayCommand(this.CopySvgExecute, CanCopy);
+            this.CopyXamlCommand = new RelayCommand(this.CopyXamlExecute, CanCopy);
+            this.QuitCommand = new RelayCommand(this.QuitExecute);
         }
 
         #endregion
@@ -43,21 +67,18 @@ namespace AxialisIconGeneratorHelper.ViewModels
 
         public void Init()
         {
-            HotKey.Register(Key.S, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.OnSaveHotKeyHandler);
-            HotKey.Register(Key.C, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.OnCopySvgHotKeyHandler);
-            HotKey.Register(Key.X, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.OnCopyXamlHotKeyHandler);
-            HotKey.Register(Key.Q, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.OnQuitHotKeyHandler);
+            HotKey.Register(Key.S, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.SaveCommand);
+            HotKey.Register(Key.C, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.CopySvgCommand);
+            HotKey.Register(Key.X, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.CopyXamlCommand);
+            HotKey.Register(Key.Q, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.QuitCommand);
 
-            var processes = Process.GetProcessesByName(@"IconGenerator");
+            var processes = Process.GetProcessesByName(IconGeneratorProcessName);
             if (!processes.Any())
-            {
-                const string iconGeneratorPath = @"C:\Program Files (x86)\Axialis\IconGenerator\IconGenerator.exe";
                 using (var process = new Process())
                 {
-                    process.StartInfo = new ProcessStartInfo(iconGeneratorPath);
+                    process.StartInfo = new ProcessStartInfo(IconGeneratorPath);
                     process.Start();
                 }
-            }
 
             this.isRunningTimer = new Timer
             {
@@ -73,6 +94,58 @@ namespace AxialisIconGeneratorHelper.ViewModels
         #endregion
 
         #region Private Methods
+
+        private static bool CanCopy()
+        {
+            var handle = InputUtils.FocusedControlInActiveWindow();
+            if (!FocusInIconGenerator(handle)) return false;
+
+            var content = InputUtils.GetText(handle);
+            return !string.IsNullOrWhiteSpace(content);
+        }
+
+        private void CopySvgExecute()
+        {
+            var handle = InputUtils.FocusedControlInActiveWindow();
+            var content = InputUtils.GetText(handle);
+            var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
+            if (drawingGroup.Children.Count < 1)
+            {
+                this.ShowInvalidSvgMessage();
+                return;
+            }
+
+            Clipboard.SetDataObject(content);
+            this.notificationService.Show(new NotificationContent
+            {
+                Content = GetNotificationContent(@"SVG скопирован", drawingGroup),
+                Title = @"Axialis IconGenerator Helper",
+                Type = NotificationType.Success
+            });
+        }
+
+        private void CopyXamlExecute()
+        {
+            var handle = InputUtils.FocusedControlInActiveWindow();
+            var content = InputUtils.GetText(handle);
+            var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
+            if (drawingGroup.Children.Count < 1)
+            {
+                this.ShowInvalidSvgMessage();
+                return;
+            }
+
+            Clipboard.SetDataObject(SvgUtils.ConvertToXaml(content));
+            this.notificationService.Show(new NotificationContent
+            {
+                Content = GetNotificationContent(@"XAML скопирован", drawingGroup),
+                Title = @"Axialis IconGenerator Helper",
+                Type = NotificationType.Success
+            });
+        }
+
+        private static bool FocusInIconGenerator(IntPtr controlHandle)
+            => ProcessUtil.GetProcessNameById(controlHandle) == IconGeneratorProcessName;
 
         private static UIElement GetNotificationContent(string text, Drawing drawingGroup)
         {
@@ -108,52 +181,12 @@ namespace AxialisIconGeneratorHelper.ViewModels
             };
         }
 
-        private void OnCopySvgHotKeyHandler()
-        {
-            var handle = InputUtils.FocusedControlInActiveWindow();
-            var content = InputUtils.GetText(handle);
-            var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
-            if (drawingGroup.Children.Count < 1)
-            {
-                this.ShowInvalidSvgMessage();
-                return;
-            }
-
-            Clipboard.SetDataObject(content);
-            this.notificationService.Show(new NotificationContent
-            {
-                Content = GetNotificationContent(@"SVG скопирован", drawingGroup),
-                Title = @"Axialis IconGenerator Helper",
-                Type = NotificationType.Success
-            });
-        }
-
-        private void OnCopyXamlHotKeyHandler()
-        {
-            var handle = InputUtils.FocusedControlInActiveWindow();
-            var content = InputUtils.GetText(handle);
-            var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
-            if (drawingGroup.Children.Count < 1)
-            {
-                this.ShowInvalidSvgMessage();
-                return;
-            }
-
-            Clipboard.SetDataObject(SvgUtils.ConvertToXaml(content));
-            this.notificationService.Show(new NotificationContent
-            {
-                Content = GetNotificationContent(@"XAML скопирован", drawingGroup),
-                Title = @"Axialis IconGenerator Helper",
-                Type = NotificationType.Success
-            });
-        }
-
         private static void OnIsRunningTimerElapsed(object sender, ElapsedEventArgs e)
         {
             if (!Process.GetProcessesByName(@"IconGenerator").Any()) Environment.Exit(0);
         }
 
-        private async void OnQuitHotKeyHandler()
+        private async void QuitExecute()
         {
             this.notificationService.Show(new NotificationContent
             {
@@ -165,7 +198,7 @@ namespace AxialisIconGeneratorHelper.ViewModels
             Environment.Exit(0);
         }
 
-        private void OnSaveHotKeyHandler()
+        private void SaveExecute()
         {
             var handle = InputUtils.FocusedControlInActiveWindow();
             var content = InputUtils.GetText(handle);

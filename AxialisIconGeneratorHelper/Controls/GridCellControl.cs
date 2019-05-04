@@ -34,7 +34,7 @@ namespace AxialisIconGeneratorHelper.Controls
             base.OnRender(dc);
 
             var pen = new Pen(this.BorderBrush, this.BorderThickness.Left);
-            
+
             //draw horizontal lines
             for (var x = this.CellSize.Width; x < this.ActualWidth; x += this.CellSize.Width)
                 dc.DrawLine(pen, new Point(x, 0), new Point(x, this.ActualHeight));

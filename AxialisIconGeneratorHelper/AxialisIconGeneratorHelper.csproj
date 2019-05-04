@@ -105,6 +105,7 @@
     <Compile Include="Utils\ColorParser.cs" />
     <Compile Include="Utils\HotKey.cs" />
     <Compile Include="Utils\InputUtils.cs" />
+    <Compile Include="Utils\ProcessUtil.cs" />
     <Compile Include="Utils\SVGUtils.cs" />
     <Compile Include="Utils\UIHelper.cs" />
     <Compile Include="Utils\WindowUtils.cs" />

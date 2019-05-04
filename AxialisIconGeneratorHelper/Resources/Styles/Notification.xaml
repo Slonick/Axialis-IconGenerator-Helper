@@ -111,32 +111,32 @@
                                        VerticalAlignment="Center"
                                        FontWeight="Medium"
                                        Foreground="Black"
-                                       Text="{Binding Title}"
+                                       Text="{Binding Title, Mode=OneTime}"
                                        TextTrimming="CharacterEllipsis" />
                         </Grid>
                         <ContentPresenter x:Name="PART_Content"
                                           Margin="5"
                                           VerticalAlignment="Center"
-                                          Content="{Binding Content}"
+                                          Content="{Binding Content, Mode=OneTime}"
                                           TextElement.Foreground="#606060" />
                     </DockPanel>
                 </Border>
                 <DataTemplate.Triggers>
-                    <DataTrigger Binding="{Binding Type}" Value="Information">
+                    <DataTrigger Binding="{Binding Type, Mode=OneTime}" Value="Information">
                         <Setter TargetName="Icon" Property="Content" Value="{StaticResource InfoIcon}" />
                         <Setter TargetName="Border" Property="Background" Value="#f4f4f5" />
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding Type}" Value="Success">
+                    <DataTrigger Binding="{Binding Type, Mode=OneTime}" Value="Success">
                         <Setter TargetName="Icon" Property="Content" Value="{StaticResource SuccessIcon}" />
                         <Setter TargetName="Border" Property="Background" Value="#f4f4f5" />
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding Type}" Value="Warning">
+                    <DataTrigger Binding="{Binding Type, Mode=OneTime}" Value="Warning">
                         <Setter TargetName="Icon" Property="Content" Value="{StaticResource WarningIcon}" />
                         <Setter TargetName="Border" Property="Background" Value="Orange" />
                         <Setter TargetName="PART_Title" Property="Foreground" Value="White" />
                         <Setter TargetName="PART_Content" Property="TextElement.Foreground" Value="White" />
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding Type}" Value="Error">
+                    <DataTrigger Binding="{Binding Type, Mode=OneTime}" Value="Error">
                         <Setter TargetName="Icon" Property="Content" Value="{StaticResource ErrorIcon}" />
                         <Setter TargetName="Border" Property="Background" Value="OrangeRed" />
                         <Setter TargetName="PART_Title" Property="Foreground" Value="White" />
