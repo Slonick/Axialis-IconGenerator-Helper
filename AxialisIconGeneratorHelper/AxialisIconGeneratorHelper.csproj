@@ -101,6 +101,7 @@
     <Compile Include="Controls\Notification\NotificationWindow.cs" />
     <Compile Include="Controls\Notification\NotificationTemplateSelector.cs" />
     <Compile Include="Controls\ReversibleStackPanel.cs" />
+    <Compile Include="Extensions\InlineExtension.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

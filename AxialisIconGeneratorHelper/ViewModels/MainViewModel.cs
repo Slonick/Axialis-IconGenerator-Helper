@@ -4,15 +4,16 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
 using AxialisIconGeneratorHelper.Controls;
 using AxialisIconGeneratorHelper.Controls.Notification;
+using AxialisIconGeneratorHelper.Extensions;
 using AxialisIconGeneratorHelper.Properties;
 using AxialisIconGeneratorHelper.Services;
 using AxialisIconGeneratorHelper.Utils;
@@ -248,20 +249,22 @@ namespace AxialisIconGeneratorHelper.ViewModels
 
         private void ShowHelpMessage()
         {
-            var builder = new StringBuilder();
-            builder.AppendLine(LocalizationManager.GetLocalizationString(@"Help.CloseProgram"));
-            builder.AppendLine(LocalizationManager.GetLocalizationString(@"Help.SaveSVG"));
-            builder.AppendLine(LocalizationManager.GetLocalizationString(@"Help.CopySVG"));
-            builder.AppendLine(LocalizationManager.GetLocalizationString(@"Help.CopyXAML"));
+            var textBlock = new TextBlock();
+            textBlock.Inlines.AddLine(LocalizationManager.GetLocalizationString(@"Help.CloseProgram"));
+            textBlock.Inlines.AddLine(LocalizationManager.GetLocalizationString(@"Help.SaveSVG"));
+            textBlock.Inlines.AddLine(LocalizationManager.GetLocalizationString(@"Help.CopySVG"));
+            textBlock.Inlines.AddLine(LocalizationManager.GetLocalizationString(@"Help.CopyXAML"));
+            textBlock.Inlines.Add(new Italic(new Run(LocalizationManager.GetLocalizationString(@"Help.ShowStartup"))));
 
             this.notificationService.Show(new NotificationContent
             {
-                Content = builder.ToString().Trim(),
+                Content = textBlock,
                 Title = AppTitle
-            }, expirationTime: TimeSpan.FromSeconds(10));
-
-            Settings.Default.ShowWelcome = false;
-            Settings.Default.Save();
+            }, expirationTime: TimeSpan.FromSeconds(10), onClick: () =>
+            {
+                Settings.Default.ShowWelcome = false;
+                Settings.Default.Save();
+            });
         }
 
         private void ShowInvalidSvgMessage()
