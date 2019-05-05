@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,8 +28,9 @@ namespace AxialisIconGeneratorHelper.ViewModels
         #region Private Constants
 
         private const string AppTitle = @"Axialis IconGenerator Helper";
-        private const string IconGeneratorPath = @"C:\Program Files (x86)\Axialis\IconGenerator\IconGenerator.exe";
+        private const string IconGeneratorExe = @"IconGenerator.exe";
         private const string IconGeneratorProcessName = @"IconGenerator";
+        private const string IconGeneratorUrl = @"https://www.axialis.com/downloads/Axialis-IconGenerator.exe";
 
         #endregion
 
@@ -70,18 +70,32 @@ namespace AxialisIconGeneratorHelper.ViewModels
 
         public void Init()
         {
+            var processes = Process.GetProcessesByName(IconGeneratorProcessName);
+            if (!processes.Any())
+            {
+                if (!AxialisUtils.IconGeneratorIsInstalled())
+                {
+                    this.notificationService.Show(new NotificationContent
+                    {
+                        Content = LocalizationManager.GetLocalizationString("Error.NotInstalled"),
+                        Title = AppTitle,
+                        Type = NotificationType.Error
+                    }, onClose: () => Environment.Exit(0), onClick: () => Process.Start(IconGeneratorUrl));
+
+                    return;
+                }
+
+                using (var process = new Process())
+                {
+                    process.StartInfo = new ProcessStartInfo(Path.Combine(AxialisUtils.GetIconGeneratorPath(), IconGeneratorExe));
+                    process.Start();
+                }
+            }
+
             HotKey.Register(Key.S, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.SaveCommand);
             HotKey.Register(Key.C, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.CopySvgCommand);
             HotKey.Register(Key.X, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.CopyXamlCommand);
             HotKey.Register(Key.Q, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.QuitCommand);
-
-            var processes = Process.GetProcessesByName(IconGeneratorProcessName);
-            if (!processes.Any())
-                using (var process = new Process())
-                {
-                    process.StartInfo = new ProcessStartInfo(IconGeneratorPath);
-                    process.Start();
-                }
 
             this.isRunningTimer = new Timer
             {
@@ -197,16 +211,13 @@ namespace AxialisIconGeneratorHelper.ViewModels
             if (!Process.GetProcessesByName(@"IconGenerator").Any()) Environment.Exit(0);
         }
 
-        private async void QuitExecute()
+        private void QuitExecute()
         {
             this.notificationService.Show(new NotificationContent
             {
                 Content = LocalizationManager.GetLocalizationString(@"Main.ClosingProgram"),
                 Title = AppTitle
-            });
-
-            await Task.Delay(1000).ConfigureAwait(true);
-            Environment.Exit(0);
+            }, onClose: () => Environment.Exit(0));
         }
 
         private void SaveExecute()

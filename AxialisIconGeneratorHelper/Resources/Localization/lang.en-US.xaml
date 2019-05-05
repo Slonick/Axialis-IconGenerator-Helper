@@ -13,4 +13,5 @@
     <system:String x:Key="Help.CopyXAML">Ctrl+Shift+X - Copy XAML</system:String>
 
     <system:String x:Key="Error.FailedParseSVG">Failed to parse SVG</system:String>
+    <system:String x:Key="Error.NotInstalled">Axialis IconGenerator not installed</system:String>
 </ResourceDictionary>
