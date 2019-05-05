@@ -101,10 +101,17 @@
     <Compile Include="Controls\Notification\NotificationWindow.cs" />
     <Compile Include="Controls\Notification\NotificationTemplateSelector.cs" />
     <Compile Include="Controls\ReversibleStackPanel.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Services\NotificationService.cs" />
+    <Compile Include="Utils\ClipboardHelper.cs" />
     <Compile Include="Utils\ColorParser.cs" />
     <Compile Include="Utils\HotKey.cs" />
     <Compile Include="Utils\InputUtils.cs" />
+    <Compile Include="Utils\LocalizationManager.cs" />
     <Compile Include="Utils\ProcessUtil.cs" />
     <Compile Include="Utils\SVGUtils.cs" />
     <Compile Include="Utils\UIHelper.cs" />
@@ -134,7 +141,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="key.snk" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Page Include="Resources\Localization\lang.en-US.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icon.ico" />

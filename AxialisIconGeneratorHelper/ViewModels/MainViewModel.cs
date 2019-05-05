@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Xml;
 using AxialisIconGeneratorHelper.Controls;
 using AxialisIconGeneratorHelper.Controls.Notification;
+using AxialisIconGeneratorHelper.Properties;
 using AxialisIconGeneratorHelper.Services;
 using AxialisIconGeneratorHelper.Utils;
 using AxialisIconGeneratorHelper.ViewModels.Base;
@@ -27,9 +28,9 @@ namespace AxialisIconGeneratorHelper.ViewModels
     {
         #region Private Constants
 
+        private const string AppTitle = @"Axialis IconGenerator Helper";
         private const string IconGeneratorPath = @"C:\Program Files (x86)\Axialis\IconGenerator\IconGenerator.exe";
         private const string IconGeneratorProcessName = @"IconGenerator";
-        private const string AppTitle = @"Axialis IconGenerator Helper";
 
         #endregion
 
@@ -90,7 +91,7 @@ namespace AxialisIconGeneratorHelper.ViewModels
             };
 
             this.isRunningTimer.Elapsed += OnIsRunningTimerElapsed;
-            this.ShowHelpMessage();
+            if (Settings.Default.ShowWelcome) this.ShowHelpMessage();
         }
 
         #endregion
@@ -110,16 +111,16 @@ namespace AxialisIconGeneratorHelper.ViewModels
         {
             var handle = InputUtils.FocusedControlInActiveWindow();
             var content = InputUtils.GetText(handle);
-            
+
             try
             {
                 var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
                 if (drawingGroup.Children.Count < 1) throw new XmlException();
 
-                Clipboard.SetDataObject(content);
+                ClipboardHelper.ClipboardSetTextSafely(content);
                 this.notificationService.Show(new NotificationContent
                 {
-                    Content = GetNotificationContent(@"SVG скопирован", drawingGroup),
+                    Content = GetNotificationContent(LocalizationManager.GetLocalizationString(@"Main.SVGCopied"), drawingGroup),
                     Title = AppTitle,
                     Type = NotificationType.Success
                 });
@@ -140,10 +141,10 @@ namespace AxialisIconGeneratorHelper.ViewModels
                 var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
                 if (drawingGroup.Children.Count < 1) throw new XmlException();
 
-                Clipboard.SetDataObject(SvgUtils.ConvertToXaml(content));
+                ClipboardHelper.ClipboardSetTextSafely(SvgUtils.ConvertToXaml(content));
                 this.notificationService.Show(new NotificationContent
                 {
-                    Content = GetNotificationContent(@"XAML скопирован", drawingGroup),
+                    Content = GetNotificationContent(LocalizationManager.GetLocalizationString(@"Main.XAMLCopied"), drawingGroup),
                     Title = AppTitle,
                     Type = NotificationType.Success
                 });
@@ -200,7 +201,7 @@ namespace AxialisIconGeneratorHelper.ViewModels
         {
             this.notificationService.Show(new NotificationContent
             {
-                Content = "Закрытие программы...",
+                Content = LocalizationManager.GetLocalizationString(@"Main.ClosingProgram"),
                 Title = AppTitle
             });
 
@@ -217,13 +218,13 @@ namespace AxialisIconGeneratorHelper.ViewModels
                 var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
                 if (drawingGroup.Children.Count < 1) throw new XmlException();
 
-                var dialog = new SaveFileDialog { Filter = "SVG|*.svg" };
+                var dialog = new SaveFileDialog {Filter = "SVG|*.svg"};
                 if (!dialog.ShowDialog(Application.Current.MainWindow).Value) return;
 
                 File.WriteAllText(dialog.FileName, content);
                 this.notificationService.Show(new NotificationContent
                 {
-                    Content = GetNotificationContent(@"SVG сохранён", drawingGroup),
+                    Content = GetNotificationContent(LocalizationManager.GetLocalizationString(@"Main.SVGSaved"), drawingGroup),
                     Title = AppTitle,
                     Type = NotificationType.Success
                 });
@@ -237,23 +238,26 @@ namespace AxialisIconGeneratorHelper.ViewModels
         private void ShowHelpMessage()
         {
             var builder = new StringBuilder();
-            builder.AppendLine("Ctrl+Shift+Q - Закрыть программу");
-            builder.AppendLine("Ctrl+Shift+S - Сохранить SVG");
-            builder.AppendLine("Ctrl+Shift+C - Копировать SVG");
-            builder.AppendLine("Ctrl+Shift+X - Копировать XAML");
+            builder.AppendLine(LocalizationManager.GetLocalizationString(@"Help.CloseProgram"));
+            builder.AppendLine(LocalizationManager.GetLocalizationString(@"Help.SaveSVG"));
+            builder.AppendLine(LocalizationManager.GetLocalizationString(@"Help.CopySVG"));
+            builder.AppendLine(LocalizationManager.GetLocalizationString(@"Help.CopyXAML"));
 
             this.notificationService.Show(new NotificationContent
             {
                 Content = builder.ToString().Trim(),
                 Title = AppTitle
             }, expirationTime: TimeSpan.FromSeconds(10));
+
+            Settings.Default.ShowWelcome = false;
+            Settings.Default.Save();
         }
 
         private void ShowInvalidSvgMessage()
         {
             this.notificationService.Show(new NotificationContent
             {
-                Content = @"Не удалось распарсить SVG",
+                Content = LocalizationManager.GetLocalizationString(@"Error.FailedParseSVG"),
                 Title = AppTitle,
                 Type = NotificationType.Error
             }, expirationTime: TimeSpan.MaxValue);

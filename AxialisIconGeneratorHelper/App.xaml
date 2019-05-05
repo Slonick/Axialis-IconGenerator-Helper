@@ -6,6 +6,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/AxialisIconGeneratorHelper;component/Resources/Localization/lang.en-US.xaml" />
                 <ResourceDictionary Source="/AxialisIconGeneratorHelper;component/Resources/Styles/Notification.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

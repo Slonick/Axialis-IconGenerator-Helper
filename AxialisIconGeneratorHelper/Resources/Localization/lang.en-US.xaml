@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <system:String x:Key="Main.SVGCopied">SVG copied</system:String>
+    <system:String x:Key="Main.SVGSaved">SVG saved</system:String>
+    <system:String x:Key="Main.XAMLCopied">XAML copied</system:String>
+    <system:String x:Key="Main.ClosingProgram">Closing program...</system:String>
+
+    <system:String x:Key="Help.CloseProgram">Ctrl+Shift+Q - Close the program</system:String>
+    <system:String x:Key="Help.SaveSVG">Ctrl+Shift+S - Save SVG</system:String>
+    <system:String x:Key="Help.CopySVG">Ctrl+Shift+C - Copy SVG</system:String>
+    <system:String x:Key="Help.CopyXAML">Ctrl+Shift+X - Copy XAML</system:String>
+
+    <system:String x:Key="Error.FailedParseSVG">Failed to parse SVG</system:String>
+</ResourceDictionary>
