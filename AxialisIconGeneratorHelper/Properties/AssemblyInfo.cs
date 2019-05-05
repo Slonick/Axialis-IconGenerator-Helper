@@ -15,5 +15,5 @@ using System.Reflection;
 [assembly: AssemblyProduct("AxialisIconGeneratorHelper")]
 [assembly: AssemblyCopyright("Copyright © 2019 Slonick")]
 [assembly: AssemblyTrademark("Open Source, Licensed MIT")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.1.0")]
+[assembly: AssemblyFileVersion("1.0.1.0")]
