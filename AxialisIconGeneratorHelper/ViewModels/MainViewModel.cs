@@ -274,7 +274,7 @@ namespace AxialisIconGeneratorHelper.ViewModels
                 Content = LocalizationManager.GetLocalizationString(@"Error.FailedParseSVG"),
                 Title = AppTitle,
                 Type = NotificationType.Error
-            }, expirationTime: TimeSpan.MaxValue);
+            });
         }
 
         #endregion
