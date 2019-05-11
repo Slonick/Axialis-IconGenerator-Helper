@@ -72,7 +72,7 @@ namespace AxialisIconGeneratorHelper.Utils
                 SetSizeToGeometries(dg);
                 RemoveObjectNames(dg);
 
-                return SvgObjectToXaml(dg, settings.IncludeRuntime, "Icon");
+                return SvgObjectToXaml(new DrawingImage(dg), settings.IncludeRuntime, "Icon");
             }
         }
 

@@ -7,7 +7,16 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/AxialisIconGeneratorHelper;component/Resources/Localization/lang.en-US.xaml" />
+
+                <ResourceDictionary Source="/AxialisIconGeneratorHelper;component/Resources/Themes/Light.xaml" />
+                <ResourceDictionary Source="/AxialisIconGeneratorHelper;component/Resources/Styles/Fonts.xaml" />
+
+                <ResourceDictionary Source="/AxialisIconGeneratorHelper;component/Resources/Styles/Button.xaml" />
                 <ResourceDictionary Source="/AxialisIconGeneratorHelper;component/Resources/Styles/Notification.xaml" />
+                <ResourceDictionary Source="/AxialisIconGeneratorHelper;component/Resources/Styles/Separator.xaml" />
+                <ResourceDictionary Source="/AxialisIconGeneratorHelper;component/Resources/Styles/Slider.xaml" />
+                <ResourceDictionary Source="/AxialisIconGeneratorHelper;component/Resources/Styles/VideoPlayer.xaml" />
+                <ResourceDictionary Source="/AxialisIconGeneratorHelper;component/Resources/Styles/Window.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

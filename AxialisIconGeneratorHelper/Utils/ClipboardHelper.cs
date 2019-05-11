@@ -1,6 +1,5 @@
 ﻿#region Usings
 
-using System;
 using System.Threading;
 using System.Windows;
 
@@ -12,22 +11,24 @@ namespace AxialisIconGeneratorHelper.Utils
     {
         #region Public Methods
 
-        public static void ClipboardSetTextSafely(string text)
+        public static bool SetText(string text, int retryTimes = 10, int retryDelay = 10)
         {
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < retryTimes; i++)
             {
                 try
                 {
-                    Clipboard.SetText(text);
-                    break;
+                    Clipboard.SetDataObject(text, true);
+                    return true;
                 }
-                catch (Exception)
+                catch
                 {
                     // ignored
                 }
 
-                Thread.Sleep(10);
+                Thread.Sleep(retryDelay);
             }
+
+            return false;
         }
 
         #endregion

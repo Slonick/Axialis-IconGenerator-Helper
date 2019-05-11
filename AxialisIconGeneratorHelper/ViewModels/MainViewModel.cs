@@ -7,6 +7,7 @@ using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -17,6 +18,7 @@ using AxialisIconGeneratorHelper.Extensions;
 using AxialisIconGeneratorHelper.Properties;
 using AxialisIconGeneratorHelper.Services;
 using AxialisIconGeneratorHelper.Utils;
+using AxialisIconGeneratorHelper.View;
 using AxialisIconGeneratorHelper.ViewModels.Base;
 using Microsoft.Win32;
 
@@ -39,6 +41,7 @@ namespace AxialisIconGeneratorHelper.ViewModels
 
         private Timer isRunningTimer;
         private readonly NotificationService notificationService;
+        private bool quitInProgress;
 
         #endregion
 
@@ -52,6 +55,8 @@ namespace AxialisIconGeneratorHelper.ViewModels
 
         public RelayCommand SaveCommand { get; }
 
+        public ICommand TutorialCommand { get; }
+
         #endregion
 
         #region Not Static Constructors
@@ -63,6 +68,7 @@ namespace AxialisIconGeneratorHelper.ViewModels
             this.CopySvgCommand = new RelayCommand(this.CopySvgExecute, CanCopy);
             this.CopyXamlCommand = new RelayCommand(this.CopyXamlExecute, CanCopy);
             this.QuitCommand = new RelayCommand(this.QuitExecute);
+            this.TutorialCommand = new RelayCommand(TutorialExecute);
         }
 
         #endregion
@@ -97,6 +103,7 @@ namespace AxialisIconGeneratorHelper.ViewModels
             HotKey.Register(Key.C, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.CopySvgCommand);
             HotKey.Register(Key.X, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.CopyXamlCommand);
             HotKey.Register(Key.Q, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.QuitCommand);
+            HotKey.Register(Key.T, KeyModifier.Ctrl | KeyModifier.Shift | KeyModifier.NoRepeat, this.TutorialCommand);
 
             this.isRunningTimer = new Timer
             {
@@ -132,13 +139,13 @@ namespace AxialisIconGeneratorHelper.ViewModels
                 var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
                 if (drawingGroup.Children.Count < 1) throw new XmlException();
 
-                ClipboardHelper.ClipboardSetTextSafely(content);
-                this.notificationService.Show(new NotificationContent
-                {
-                    Content = GetNotificationContent(LocalizationManager.GetLocalizationString(@"Main.SVGCopied"), drawingGroup),
-                    Title = AppTitle,
-                    Type = NotificationType.Success
-                });
+                if (ClipboardHelper.SetText(content))
+                    this.notificationService.Show(new NotificationContent
+                    {
+                        Content = GetNotificationContent(LocalizationManager.GetLocalizationString(@"Main.SVGCopied"), drawingGroup),
+                        Title = AppTitle,
+                        Type = NotificationType.Success
+                    });
             }
             catch (XmlException)
             {
@@ -156,13 +163,13 @@ namespace AxialisIconGeneratorHelper.ViewModels
                 var drawingGroup = SvgUtils.ConvertToDrawingGroup(content);
                 if (drawingGroup.Children.Count < 1) throw new XmlException();
 
-                ClipboardHelper.ClipboardSetTextSafely(SvgUtils.ConvertToXaml(content));
-                this.notificationService.Show(new NotificationContent
-                {
-                    Content = GetNotificationContent(LocalizationManager.GetLocalizationString(@"Main.XAMLCopied"), drawingGroup),
-                    Title = AppTitle,
-                    Type = NotificationType.Success
-                });
+                if (ClipboardHelper.SetText(SvgUtils.ConvertToXaml(content)))
+                    this.notificationService.Show(new NotificationContent
+                    {
+                        Content = GetNotificationContent(LocalizationManager.GetLocalizationString(@"Main.XAMLCopied"), drawingGroup),
+                        Title = AppTitle,
+                        Type = NotificationType.Success
+                    });
             }
             catch (XmlException)
             {
@@ -175,36 +182,40 @@ namespace AxialisIconGeneratorHelper.ViewModels
 
         private static UIElement GetNotificationContent(string text, Drawing drawingGroup)
         {
-            const int cellSize = 12;
-
-            return new StackPanel
+            var panel = new StackPanel
             {
-                Orientation = Orientation.Vertical,
-                Children =
+                Orientation = Orientation.Vertical
+            };
+
+            var textBlock = new TextBlock
+            {
+                Text = text,
+                Margin = new Thickness(0, 0, 0, 5)
+            };
+            panel.Children.Add(textBlock);
+
+            var gridCellControl = new GridCellControl
+            {
+                Background = new SolidColorBrush(ColorParser.ParseHexColor("#fcfbfa")),
+                GridLineBrush = new SolidColorBrush(ColorParser.ParseHexColor("#dcdcdc")),
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Child = new Image
                 {
-                    new TextBlock
-                    {
-                        Text = text,
-                        Foreground = new SolidColorBrush(ColorParser.ParseHexColor("#606060")),
-                        Margin = new Thickness(0, 0, 0, 5)
-                    },
-                    new GridCellControl
-                    {
-                        Background = new SolidColorBrush(ColorParser.ParseHexColor("#fcfbfa")),
-                        BorderBrush = new SolidColorBrush(ColorParser.ParseHexColor("#dcdcdc")),
-                        BorderThickness = new Thickness(1),
-                        CellSize = new Size(cellSize, cellSize),
-                        Padding = new Thickness(cellSize),
-                        Width = cellSize * 24,
-                        Height = cellSize * 24,
-                        Child = new Image
-                        {
-                            Source = new DrawingImage(drawingGroup),
-                            Stretch = Stretch.Uniform
-                        }
-                    }
+                    Source = new DrawingImage(drawingGroup),
+                    Stretch = Stretch.Uniform
                 }
             };
+
+            var binding = new Binding
+            {
+                Path = new PropertyPath("ActualWidth"),
+                RelativeSource = RelativeSource.Self
+            };
+            gridCellControl.SetBinding(FrameworkElement.HeightProperty, binding);
+            panel.Children.Add(gridCellControl);
+
+            return panel;
         }
 
         private static void OnIsRunningTimerElapsed(object sender, ElapsedEventArgs e)
@@ -214,11 +225,19 @@ namespace AxialisIconGeneratorHelper.ViewModels
 
         private void QuitExecute()
         {
+            if (this.quitInProgress) return;
+
+            this.quitInProgress = true;
             this.notificationService.Show(new NotificationContent
             {
                 Content = LocalizationManager.GetLocalizationString(@"Main.ClosingProgram"),
                 Title = AppTitle
-            }, onClose: () => Environment.Exit(0));
+            }, expirationTime: TimeSpan.FromSeconds(2), onClose: () =>
+            {
+                foreach (var process in Process.GetProcessesByName(@"IconGenerator")) process.Kill();
+
+                Environment.Exit(0);
+            });
         }
 
         private void SaveExecute()
@@ -249,16 +268,30 @@ namespace AxialisIconGeneratorHelper.ViewModels
 
         private void ShowHelpMessage()
         {
+            var panel = new StackPanel {Orientation = Orientation.Vertical};
+
             var textBlock = new TextBlock();
             textBlock.Inlines.AddLine(LocalizationManager.GetLocalizationString(@"Help.CloseProgram"));
             textBlock.Inlines.AddLine(LocalizationManager.GetLocalizationString(@"Help.SaveSVG"));
             textBlock.Inlines.AddLine(LocalizationManager.GetLocalizationString(@"Help.CopySVG"));
             textBlock.Inlines.AddLine(LocalizationManager.GetLocalizationString(@"Help.CopyXAML"));
             textBlock.Inlines.Add(new Italic(new Run(LocalizationManager.GetLocalizationString(@"Help.ShowStartup"))));
+            panel.Children.Add(textBlock);
+
+            var separator = new Separator();
+            panel.Children.Add(separator);
+
+            var button = new Button
+            {
+                Content = "Tutorial",
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Command = this.TutorialCommand
+            };
+            panel.Children.Add(button);
 
             this.notificationService.Show(new NotificationContent
             {
-                Content = textBlock,
+                Content = panel,
                 Title = AppTitle
             }, expirationTime: TimeSpan.FromSeconds(10), onClick: () =>
             {
@@ -275,6 +308,12 @@ namespace AxialisIconGeneratorHelper.ViewModels
                 Title = AppTitle,
                 Type = NotificationType.Error
             });
+        }
+
+        private static void TutorialExecute()
+        {
+            var tutorialWindow = new TutorialWindow();
+            tutorialWindow.Show();
         }
 
         #endregion

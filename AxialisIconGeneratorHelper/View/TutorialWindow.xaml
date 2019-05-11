@@ -1,0 +1,20 @@
+﻿<controls:STWindow x:Class="AxialisIconGeneratorHelper.View.TutorialWindow"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:controls="clr-namespace:AxialisIconGeneratorHelper.Controls"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   Title="Axialis IconGenerator Helper - Tutorial"
+                   Width="960"
+                   ResizeMode="NoResize"
+                   SizeToContent="Height"
+                   Style="{DynamicResource {x:Type controls:STWindow}}"
+                   WindowStartupLocation="CenterScreen"
+                   mc:Ignorable="d">
+    <Grid>
+        <controls:VideoPlayer Height="540"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"
+                              Source="http://slonick.com/files/tutorial.mp4" />
+    </Grid>
+</controls:STWindow>

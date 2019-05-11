@@ -1,0 +1,69 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+
+    <!--#region Colors-->
+    <Color x:Key="AccentMainColor">#FF3399FF</Color>
+    <Color x:Key="AccentDarkColor">#FF007ACC</Color>
+    <Color x:Key="SelectedColor">#FFFFFFFF</Color>
+    <Color x:Key="ValidationColor">#FFFF3333</Color>
+
+    <Color x:Key="Toast.SuccessColor">#11AD45</Color>
+    <Color x:Key="Toast.WarningColor">#F5A300</Color>
+    <Color x:Key="Toast.ErrorColor">#E60914</Color>
+    <Color x:Key="Toast.InformationColor">#147EC9</Color>
+
+    <Color x:Key="AccentColor">#FF007ACC</Color>
+    <Color x:Key="MarkerColor">#FF1E1E1E</Color>
+    <Color x:Key="StrongColor">#FF717171</Color>
+    <Color x:Key="MainColor">#FFFFFFFF</Color>
+    <Color x:Key="PrimaryColor">#FFEEEEF2</Color>
+    <Color x:Key="AlternativeColor">#FFF5F5F5</Color>
+    <Color x:Key="MouseOverColor">#FFC9DEF5</Color>
+    <Color x:Key="BasicColor">#FFCCCEDB</Color>
+    <Color x:Key="SemiBasicColor">#66CCCEDB</Color>
+    <Color x:Key="HeaderColor">#FF007ACC</Color>
+    <Color x:Key="ComplementaryColor">#FFDBDDE6</Color>
+    <!--#endregion-->
+
+    <!--#region Brushes-->
+    <SolidColorBrush x:Key="AccentMainBrush"
+                     po:Freeze="True"
+                     Color="{DynamicResource AccentMainColor}" />
+    <SolidColorBrush x:Key="AccentDarkBrush"
+                     po:Freeze="True"
+                     Color="{DynamicResource AccentDarkColor}" />
+    <SolidColorBrush x:Key="SelectedBrush"
+                     po:Freeze="True"
+                     Color="{DynamicResource SelectedColor}" />
+    <SolidColorBrush x:Key="ValidationBrush"
+                     po:Freeze="True"
+                     Color="{DynamicResource ValidationColor}" />
+
+    <SolidColorBrush x:Key="Toast.SuccessBrush"
+                     po:Freeze="True"
+                     Color="{DynamicResource Toast.SuccessColor}" />
+    <SolidColorBrush x:Key="Toast.WarningBrush"
+                     po:Freeze="True"
+                     Color="{DynamicResource Toast.WarningColor}" />
+    <SolidColorBrush x:Key="Toast.ErrorBrush"
+                     po:Freeze="True"
+                     Color="{DynamicResource Toast.ErrorColor}" />
+    <SolidColorBrush x:Key="Toast.InformationBrush"
+                     po:Freeze="True"
+                     Color="{DynamicResource Toast.InformationColor}" />
+
+    <SolidColorBrush x:Key="AccentBrush" Color="{DynamicResource AccentColor}" />
+    <SolidColorBrush x:Key="MarkerBrush" Color="{DynamicResource MarkerColor}" />
+    <SolidColorBrush x:Key="StrongBrush" Color="{DynamicResource StrongColor}" />
+    <SolidColorBrush x:Key="MainBrush" Color="{DynamicResource MainColor}" />
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource PrimaryColor}" />
+    <SolidColorBrush x:Key="AlternativeBrush" Color="{DynamicResource AlternativeColor}" />
+    <SolidColorBrush x:Key="MouseOverBrush" Color="{DynamicResource MouseOverColor}" />
+    <SolidColorBrush x:Key="BasicBrush" Color="{DynamicResource BasicColor}" />
+    <SolidColorBrush x:Key="SemiBasicBrush" Color="{DynamicResource SemiBasicColor}" />
+    <SolidColorBrush x:Key="HeaderBrush" Color="{DynamicResource HeaderColor}" />
+    <SolidColorBrush x:Key="ComplementaryBrush" Color="{DynamicResource ComplementaryColor}" />
+    <!--#endregion-->
+
+</ResourceDictionary>

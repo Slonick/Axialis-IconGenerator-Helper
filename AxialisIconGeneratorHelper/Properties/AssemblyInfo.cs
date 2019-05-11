@@ -1,6 +1,12 @@
 ﻿#region Usings
 
+using System.Runtime.InteropServices;
+
+#region Usings
+
 using System.Reflection;
+
+#endregion
 
 #endregion
 
@@ -17,3 +23,4 @@ using System.Reflection;
 [assembly: AssemblyTrademark("Open Source, Licensed MIT")]
 [assembly: AssemblyVersion("1.0.1.0")]
 [assembly: AssemblyFileVersion("1.0.1.0")]
+[assembly: Guid("0592D685-B8D3-443C-A714-4170551346FA")]
