@@ -104,14 +104,16 @@
                                        VerticalAlignment="Center"
                                        FontWeight="Medium"
                                        Foreground="{DynamicResource MarkerBrush}"
-                                       Text="{Binding Title, Mode=OneTime}"
+                                       Text="{Binding Title,
+                                                      Mode=OneTime}"
                                        TextTrimming="CharacterEllipsis" />
                         </Grid>
                         <ContentPresenter x:Name="PART_Content"
                                           Grid.Row="1"
                                           Margin="5"
                                           VerticalAlignment="Center"
-                                          Content="{Binding Content, Mode=OneTime}"
+                                          Content="{Binding Content,
+                                                            Mode=OneTime}"
                                           TextElement.Foreground="{DynamicResource MarkerBrush}" />
                     </Grid>
                 </Border>

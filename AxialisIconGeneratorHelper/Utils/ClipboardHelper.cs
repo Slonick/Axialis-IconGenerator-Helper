@@ -17,7 +17,7 @@ namespace AxialisIconGeneratorHelper.Utils
             {
                 try
                 {
-                    Clipboard.SetDataObject(text, true);
+                    Clipboard.SetDataObject(text);
                     return true;
                 }
                 catch

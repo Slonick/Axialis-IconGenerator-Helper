@@ -14,7 +14,8 @@
         <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
         <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
-                <WindowChrome CaptionHeight="{Binding HeaderHeight.Value, RelativeSource={RelativeSource AncestorType={x:Type controls:STWindow}}}"
+                <WindowChrome CaptionHeight="{Binding HeaderHeight.Value,
+                                                      RelativeSource={RelativeSource AncestorType={x:Type controls:STWindow}}}"
                               CornerRadius="0"
                               GlassFrameThickness="-1"
                               NonClientFrameEdges="None"
@@ -69,7 +70,8 @@
                                     <StackPanel Grid.Column="2" Orientation="Horizontal">
                                         <Button x:Name="MinimizeButton"
                                                 VerticalAlignment="Center"
-                                                Command="{Binding MinimizeCommand, RelativeSource={RelativeSource AncestorType={x:Type controls:STWindow}}}"
+                                                Command="{Binding MinimizeCommand,
+                                                                  RelativeSource={RelativeSource AncestorType={x:Type controls:STWindow}}}"
                                                 Style="{DynamicResource WindowStyleTitleBarButton}">
                                             <Path Width="10"
                                                   Height="10"
@@ -77,23 +79,29 @@
                                                   VerticalAlignment="Center"
                                                   Data="M0,5 L10,5"
                                                   RenderOptions.EdgeMode="Aliased"
-                                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"
+                                                  Stroke="{Binding Foreground,
+                                                                   RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                  AncestorType=Button}}"
                                                   StrokeThickness="1" />
                                         </Button>
                                         <Button x:Name="MaximizeButton"
                                                 VerticalAlignment="Center"
-                                                Command="{Binding MaximizeCommand, RelativeSource={RelativeSource AncestorType={x:Type controls:STWindow}}}"
+                                                Command="{Binding MaximizeCommand,
+                                                                  RelativeSource={RelativeSource AncestorType={x:Type controls:STWindow}}}"
                                                 Style="{DynamicResource WindowStyleTitleBarButton}">
                                             <Rectangle Width="10"
                                                        Height="10"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center"
-                                                       Stroke="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"
+                                                       Stroke="{Binding Foreground,
+                                                                        RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                       AncestorType=Button}}"
                                                        StrokeThickness="1" />
                                         </Button>
                                         <Button x:Name="RestoreButton"
                                                 VerticalAlignment="Center"
-                                                Command="{Binding RestoreCommand, RelativeSource={RelativeSource AncestorType={x:Type controls:STWindow}}}"
+                                                Command="{Binding RestoreCommand,
+                                                                  RelativeSource={RelativeSource AncestorType={x:Type controls:STWindow}}}"
                                                 Style="{DynamicResource WindowStyleTitleBarButton}">
                                             <Polyline Width="10"
                                                       Height="10"
@@ -102,19 +110,24 @@
                                                       Points="2,2 2,0 9,0 9,7 7,7 7,2 0,2 0,9 7,9 7,7"
                                                       RenderOptions.EdgeMode="Aliased"
                                                       SnapsToDevicePixels="True"
-                                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"
+                                                      Stroke="{Binding Foreground,
+                                                                       RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                      AncestorType=Button}}"
                                                       StrokeThickness="1" />
                                         </Button>
                                         <Button x:Name="CloseButton"
                                                 VerticalAlignment="Center"
-                                                Command="{Binding CloseCommand, RelativeSource={RelativeSource AncestorType={x:Type controls:STWindow}}}"
+                                                Command="{Binding CloseCommand,
+                                                                  RelativeSource={RelativeSource AncestorType={x:Type controls:STWindow}}}"
                                                 Style="{DynamicResource WindowStyleTitleBarButton}">
                                             <Path Width="10"
                                                   Height="10"
                                                   HorizontalAlignment="Center"
                                                   VerticalAlignment="Center"
                                                   Data="M0,0 L10,10 M10,0 L0,10"
-                                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"
+                                                  Stroke="{Binding Foreground,
+                                                                   RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                  AncestorType=Button}}"
                                                   StrokeThickness="1.25" />
                                         </Button>
                                     </StackPanel>
